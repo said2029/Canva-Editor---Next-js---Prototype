@@ -6,10 +6,11 @@ export default function useEditor() {
   const [canves, setCanves] = useState<fabric.Canvas | null>(null);
   const [container, setContainer] = useState<HTMLDivElement | null>(null);
 
-  useAutoResize({
+  const {} = useAutoResize({
     canves,
     container,
   });
+
   const init = useCallback(
     ({
       initialCanvas,
@@ -30,8 +31,8 @@ export default function useEditor() {
       });
 
       const initailWordspace = new fabric.Rect({
-        width: 900,
-        height: 900,
+        width: 300,
+        height: 1200,
         fill: "white",
         name: "clip",
         selectable: false,
@@ -49,6 +50,8 @@ export default function useEditor() {
       initialCanvas.add(initailWordspace);
       initialCanvas.centerObject(initailWordspace);
       initialCanvas.clipPath = initailWordspace;
+      setContainer(initialContainer);
+      setCanves(initialCanvas);
 
       const newReac = new fabric.Rect({
         width: 100,

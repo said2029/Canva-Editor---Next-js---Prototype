@@ -2,6 +2,10 @@
 import React, { useEffect, useRef } from "react";
 import useEditor from "../hooks/use-editor";
 import { fabric } from "fabric";
+import Navbar from "./Navbar";
+import Sidebar from "./Sidebar";
+import ToolBar from "./ToolBar";
+import Footer from "./Footer";
 
 export default function Editor() {
   const { init } = useEditor();
@@ -20,12 +24,27 @@ export default function Editor() {
       initialCanvas: Canvas,
       initialContainer: ContainerRef.current!,
     });
+
+    return () => {
+      Canvas.dispose();
+    };
   }, [init]);
 
   return (
     <div className="h-full flex flex-col">
-      <div className="h-full flex-1 bg-muted" ref={ContainerRef}>
-        <canvas className="w-full h-full" ref={canvesRef} />
+      <Navbar />
+      <div className="absolute h-[calc(100%-68px)] w-full top-[68px] flex">
+        <Sidebar />
+        <main className="bg-muted flex-1 overflow-auto relative flex-col">
+          <ToolBar />
+          <div
+            className="flex-1 bg-muted h-[calc(100%-124px)]"
+            ref={ContainerRef}
+          >
+            <canvas className="w-full h-full" ref={canvesRef} />
+          </div>
+          <Footer />
+        </main>
       </div>
     </div>
   );
