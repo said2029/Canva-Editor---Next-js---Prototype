@@ -7,10 +7,11 @@ import Sidebar from "./Sidebar";
 import ToolBar from "./ToolBar";
 import Footer from "./Footer";
 import { ActiveTool } from "../Types";
+import ShapeSidebar from "./shape-sidebar";
 
 export default function Editor() {
-  const { init } = useEditor();
-  const [activeTool, setActiveTools] = useState<ActiveTool>();
+  const { init, editor } = useEditor();
+  const [activeTool, setActiveTools] = useState<ActiveTool>("select");
 
   const onChangeActiveTool = (tool: ActiveTool) => {
     if (activeTool != tool) {
@@ -42,7 +43,17 @@ export default function Editor() {
     <div className="h-full flex flex-col">
       <Navbar />
       <div className="absolute h-[calc(100%-68px)] w-full top-[68px] flex">
-        <Sidebar activeTool={activeTool} onChangeActiveTool={onChangeActiveTool}/>
+        <Sidebar
+          activeTool={activeTool}
+          onChangeActiveTool={onChangeActiveTool}
+        />
+        {/* tools */}
+        <ShapeSidebar
+          editor={editor}
+          activeTool={activeTool}
+          onChangeActiveTool={onChangeActiveTool}
+        />
+
         <main className="bg-muted flex-1 overflow-auto relative flex-col">
           <ToolBar />
           <div

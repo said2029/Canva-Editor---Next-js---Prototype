@@ -1,12 +1,54 @@
+"use client";
 import { fabric } from "fabric";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import useAutoResize from "./use-auto-resize";
+import { BuildEditorProps, Editor } from "../Types";
 
+const BuildEditor = ({ canvas }: BuildEditorProps) => {
+  return {
+    addCircle: () => {
+      console.log("first");
+      const circle = new fabric.Circle({
+        width: 100,
+        height: 100,
+        fill: "#000",
+        radius: 150,
+        shadow: new fabric.Shadow({
+          color: "red",
+          offsetX: 12,
+          offsetY: 4,
+        }),
+      });
+
+      canvas.add(circle);
+      canvas.centerObject(circle);
+    },
+    addSoftRectangle: () => {
+      const squire = new fabric.Rect({
+        width: 100,
+        height: 100,
+        fill: "red",
+      });
+
+      canvas.add(squire);
+      canvas.centerObject(squire);
+    },
+  };
+};
 export default function useEditor() {
   const [canves, setCanves] = useState<fabric.Canvas | null>(null);
   const [container, setContainer] = useState<HTMLDivElement | null>(null);
 
-  const {} = useAutoResize({
+  const editor = useMemo(() => {
+    if (canves) {
+      return BuildEditor({
+        canvas: canves,
+      });
+    }
+    return {};
+  }, [canves]) as Editor;
+
+  useAutoResize({
     canves,
     container,
   });
@@ -52,16 +94,8 @@ export default function useEditor() {
       initialCanvas.clipPath = initailWordspace;
       setContainer(initialContainer);
       setCanves(initialCanvas);
-
-      const newReac = new fabric.Rect({
-        width: 100,
-        height: 100,
-        fill: "black",
-      });
-      initialCanvas.add(newReac);
-      initialCanvas.centerObject(newReac);
     },
     []
   );
-  return { init };
+  return { init, editor };
 }
