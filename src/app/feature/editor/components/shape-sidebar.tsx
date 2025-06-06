@@ -30,16 +30,11 @@ export default function ShapeSidebar({
       />
 
       <div className="mt-3 grid grid-cols-3 gap-4 w-full p-2">
-        <ShapeTool
-          icon={FaCircle}
-          onClick={() => {
-            editor?.addCircle();
-          }}
-        />
+        <ShapeTool icon={FaCircle} onClick={editor?.addCircle} />
         <ShapeTool icon={FaSquare} onClick={editor?.addSoftRectangle} />
-        <ShapeTool icon={FaSquareFull} onClick={() => {}} />
-        <ShapeTool icon={IoTriangle} onClick={() => {}} />
-        <ShapeTool icon={FaDiamond} onClick={() => {}} />
+        <ShapeTool icon={FaSquareFull} onClick={editor?.addRectangle} />
+        <ShapeTool icon={IoTriangle} onClick={editor?.addTriangle} />
+        <ShapeTool icon={FaDiamond} onClick={editor?.addDiamond} />
       </div>
     </aside>
   );

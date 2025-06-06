@@ -39,6 +39,23 @@ export default function Editor() {
     };
   }, [init]);
 
+  useEffect(() => {
+    window.addEventListener("keyup", (event) => {
+      console.log(event.key);
+      if (event.key == "Delete") {
+        editor.delete();
+      }
+    });
+
+    return () => {
+      window.removeEventListener("keyup", (event) => {
+        if (event.key == "Delete") {
+          editor.delete();
+        }
+      });
+    };
+  });
+
   return (
     <div className="h-full flex flex-col">
       <Navbar />

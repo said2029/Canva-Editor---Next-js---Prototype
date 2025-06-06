@@ -3,8 +3,22 @@ import { fabric } from "fabric";
 import { useCallback, useMemo, useState } from "react";
 import useAutoResize from "./use-auto-resize";
 import { BuildEditorProps, Editor } from "../Types";
+import useCanvesEvent from "./use-canves-event";
 
 const BuildEditor = ({ canvas }: BuildEditorProps) => {
+  const center = (obj: fabric.Object) => {
+    if (!canvas) return;
+    const workspace = canvas.getObjects().find((item) => item.name == "clip");
+    const point = workspace?.getCenterPoint();
+    // @ts-ignore
+    canvas._centerObject(obj, point);
+  };
+  const addCanvesObject = (obj: fabric.Object) => {
+    center(obj);
+    canvas.add(obj);
+    canvas.setActiveObject(obj);
+  };
+
   return {
     addCircle: () => {
       console.log("first");
@@ -13,31 +27,67 @@ const BuildEditor = ({ canvas }: BuildEditorProps) => {
         height: 100,
         fill: "#000",
         radius: 150,
-        shadow: new fabric.Shadow({
-          color: "red",
-          offsetX: 12,
-          offsetY: 4,
-        }),
       });
-
-      canvas.add(circle);
-      canvas.centerObject(circle);
+      addCanvesObject(circle);
     },
     addSoftRectangle: () => {
       const squire = new fabric.Rect({
         width: 100,
         height: 100,
-        fill: "red",
+        rx: 12,
+        ry: 12,
+        fill: "#000",
       });
+      addCanvesObject(squire);
+    },
+    addDiamond: () => {
+      const squire = new fabric.Rect({
+        width: 100,
+        height: 100,
+        rx: 12,
+        ry: 12,
+        fill: "#000",
+        angle: 45,
+      });
+      addCanvesObject(squire);
+    },
 
-      canvas.add(squire);
-      canvas.centerObject(squire);
+    addRectangle: () => {
+      const squire = new fabric.Rect({
+        width: 100,
+        height: 100,
+      });
+      addCanvesObject(squire);
+    },
+    addTriangle: () => {
+      const squire = new fabric.Triangle({
+        width: 100,
+        height: 100,
+      });
+      addCanvesObject(squire);
+    },
+
+    delete: () => {
+      if (!canvas) return;
+      const activeObject = canvas.getActiveObjects();
+      if (activeObject) {
+        activeObject.map((ob) => {
+          canvas.remove(ob);
+        });
+      }
+      canvas.discardActiveObject();
     },
   };
 };
 export default function useEditor() {
   const [canves, setCanves] = useState<fabric.Canvas | null>(null);
   const [container, setContainer] = useState<HTMLDivElement | null>(null);
+  const [selectedObject, setSelectedObject] = useState<fabric.Object[]>([]);
+
+  useCanvesEvent({
+    canves: canves,
+    setSelectedObject: setSelectedObject,
+  });
 
   const editor = useMemo(() => {
     if (canves) {
