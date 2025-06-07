@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect } from "react";
 
 interface useCanvesEventProps {
@@ -28,5 +29,5 @@ export default function useCanvesEvent({
       canves?.off("selection:cleared");
     };
   }, [canves]);
-  return <div>use-canves-event</div>;
+  return <div></div>;
 }

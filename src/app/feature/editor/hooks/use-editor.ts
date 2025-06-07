@@ -5,7 +5,12 @@ import useAutoResize from "./use-auto-resize";
 import { BuildEditorProps, Editor } from "../Types";
 import useCanvesEvent from "./use-canves-event";
 
-const BuildEditor = ({ canvas }: BuildEditorProps) => {
+const BuildEditor = ({
+  canvas,
+  selectedObjects,
+  fillColor,
+  setFillColor,
+}: BuildEditorProps) => {
   const center = (obj: fabric.Object) => {
     if (!canvas) return;
     const workspace = canvas.getObjects().find((item) => item.name == "clip");
@@ -19,13 +24,23 @@ const BuildEditor = ({ canvas }: BuildEditorProps) => {
     canvas.setActiveObject(obj);
   };
 
+  const DEFAULT_COLOR = fillColor;
+
   return {
+    changeFillColor: (value: string) => {
+      if (!canvas) return null;
+      setFillColor(value);
+      selectedObjects.forEach((e) => {
+        e.set({ fill: value });
+      });
+      canvas.renderAll();
+    },
     addCircle: () => {
       console.log("first");
       const circle = new fabric.Circle({
         width: 100,
         height: 100,
-        fill: "#000",
+        fill: DEFAULT_COLOR,
         radius: 150,
       });
       addCanvesObject(circle);
@@ -36,7 +51,7 @@ const BuildEditor = ({ canvas }: BuildEditorProps) => {
         height: 100,
         rx: 12,
         ry: 12,
-        fill: "#000",
+        fill: DEFAULT_COLOR,
       });
       addCanvesObject(squire);
     },
@@ -46,7 +61,7 @@ const BuildEditor = ({ canvas }: BuildEditorProps) => {
         height: 100,
         rx: 12,
         ry: 12,
-        fill: "#000",
+        fill: DEFAULT_COLOR,
         angle: 45,
       });
       addCanvesObject(squire);
@@ -56,6 +71,7 @@ const BuildEditor = ({ canvas }: BuildEditorProps) => {
       const squire = new fabric.Rect({
         width: 100,
         height: 100,
+        fill: DEFAULT_COLOR,
       });
       addCanvesObject(squire);
     },
@@ -63,6 +79,7 @@ const BuildEditor = ({ canvas }: BuildEditorProps) => {
       const squire = new fabric.Triangle({
         width: 100,
         height: 100,
+        fill: DEFAULT_COLOR,
       });
       addCanvesObject(squire);
     },
@@ -77,12 +94,16 @@ const BuildEditor = ({ canvas }: BuildEditorProps) => {
       }
       canvas.discardActiveObject();
     },
+
+    fillColor,
+    setFillColor,
   };
 };
 export default function useEditor() {
   const [canves, setCanves] = useState<fabric.Canvas | null>(null);
   const [container, setContainer] = useState<HTMLDivElement | null>(null);
   const [selectedObject, setSelectedObject] = useState<fabric.Object[]>([]);
+  const [fillColor, setFillColor] = useState<string>("rgba(0,0,0,1)");
 
   useCanvesEvent({
     canves: canves,
@@ -93,10 +114,13 @@ export default function useEditor() {
     if (canves) {
       return BuildEditor({
         canvas: canves,
+        selectedObjects: selectedObject,
+        fillColor,
+        setFillColor,
       });
     }
     return {};
-  }, [canves]) as Editor;
+  }, [canves, selectedObject, fillColor]) as Editor;
 
   useAutoResize({
     canves,
@@ -124,7 +148,7 @@ export default function useEditor() {
 
       const initailWordspace = new fabric.Rect({
         width: 300,
-        height: 1200,
+        height: 300,
         fill: "white",
         name: "clip",
         selectable: false,

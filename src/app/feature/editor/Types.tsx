@@ -10,7 +10,7 @@ export const JSON_KEYS = [
   "linkData",
   "editable",
   "extensionType",
-  "extension"
+  "extension",
 ];
 
 export const filters = [
@@ -178,7 +178,7 @@ export interface EditorHookProps {
     height: number;
     width: number;
   }) => void;
-};
+}
 
 export type BuildEditorProps = {
   // undo: () => void;
@@ -190,14 +190,14 @@ export type BuildEditorProps = {
   // copy: () => void;
   // paste: () => void;
   canvas: fabric.Canvas;
-  // fillColor: string;
+  fillColor: string;
   // strokeColor: string;
   // strokeWidth: number;
-  // selectedObjects: fabric.Object[];
+  selectedObjects: fabric.Object[];
   // strokeDashArray: number[];
   // fontFamily: string;
   // setStrokeDashArray: (value: number[]) => void;
-  // setFillColor: (value: string) => void;
+  setFillColor: (value: string) => void;
   // setStrokeColor: (value: string) => void;
   // setStrokeWidth: (value: number) => void;
   // setFontFamily: (value: string) => void;
@@ -261,4 +261,5 @@ export interface Editor {
   getActiveStrokeWidth: () => number;
   getActiveStrokeDashArray: () => number[];
   selectedObjects: fabric.Object[];
-};
+  fillColor: string;
+}
