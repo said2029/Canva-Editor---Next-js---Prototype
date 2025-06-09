@@ -42,10 +42,23 @@ export default function Editor() {
   }, [init]);
 
   useEffect(() => {
+    if (!editor) return;
     window.addEventListener("keyup", (event) => {
       console.log(event.key);
       if (event.key == "Delete") {
         editor.delete();
+      }
+    });
+
+    // layering
+    window.addEventListener("keydown", (event) => {
+      if (event.ctrlKey && event.key === "]") {
+        editor?.bringForward();
+      }
+    });
+    window.addEventListener("keydown", (event) => {
+      if (event.ctrlKey && event.key === "[") {
+        editor?.sendBackwards();
       }
     });
 
@@ -55,8 +68,20 @@ export default function Editor() {
           editor.delete();
         }
       });
+      // layering remove event
+      window.removeEventListener("keydown", (event) => {
+        if (event.ctrlKey && event.key === "]") {
+          // Your code here
+          console.log("Ctrl + ] pressed");
+        }
+      });
+      window.removeEventListener("keydown", (event) => {
+        if (event.ctrlKey && event.key === "[") {
+          editor.sendBackwards();
+        }
+      });
     };
-  });
+  }, [editor]);
 
   return (
     <div className="h-full flex flex-col">

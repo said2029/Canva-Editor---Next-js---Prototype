@@ -5,6 +5,7 @@ interface useCanvesEventProps {
   canves: fabric.Canvas | null;
   setSelectedObject: (object: fabric.Object[]) => void;
 }
+const SNAP_THRESHOLD = 10;
 
 export default function useCanvesEvent({
   canves,

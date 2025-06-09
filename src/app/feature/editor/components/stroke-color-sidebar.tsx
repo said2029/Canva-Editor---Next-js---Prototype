@@ -54,16 +54,16 @@ export default function StrokeColorSidebar({
         <hr className="my-2.5 w-full border" />
         <div>
           <p className="font-sans font-bold text-xs">
-            Rounded ({editor.strokeWidth})
+            Rounded ({editor.rounded})
           </p>
           <Slider
             className="mt-2"
             onValueChange={(e) => {
               const value = +e;
-              editor.changeStrokeWidth(value);
+              editor.changeRounded(value);
             }}
-            defaultValue={[editor.strokeWidth]}
-            value={[editor.strokeWidth]}
+            defaultValue={[editor.rounded]}
+            value={[editor.rounded]}
             max={100}
             step={1}
           />

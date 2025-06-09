@@ -13,7 +13,7 @@ export default function ColorPiker({
       <SketchPicker
         color={defaultColor}
         className="!shadow-none !w-full mt-2.5"
-        onChangeComplete={onChangeComplete}
+        onChange={onChangeComplete}
       />
     </div>
   );

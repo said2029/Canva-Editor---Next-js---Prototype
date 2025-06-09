@@ -14,7 +14,9 @@ const BuildEditor = ({
   setFillColor,
   setStrokeColor,
   setStrokeWidth,
-  setStrokeDashArray
+  setStrokeDashArray,
+  rounded,
+  setRounded,
 }: BuildEditorProps) => {
   const center = (obj: fabric.Object) => {
     if (!canvas) return;
@@ -29,9 +31,24 @@ const BuildEditor = ({
     canvas.setActiveObject(obj);
   };
 
+  const getWorkspace = () => {
+    return canvas.getObjects().find((item) => item.name == "clip");
+  };
+
   const DEFAULT_COLOR = fillColor;
 
   return {
+    bringForward: () => {
+      selectedObjects.forEach((obj) => {
+        canvas.bringForward(obj);
+      });
+    },
+    sendBackwards: () => {
+      selectedObjects.forEach((obj) => {
+        canvas.sendToBack(obj);
+        getWorkspace()?.sendToBack();
+      });
+    },
     changeFillColor: (value: string) => {
       if (!canvas) return null;
       setFillColor(value);
@@ -62,6 +79,16 @@ const BuildEditor = ({
       // setStrokeWidth(value);
       selectedObjects.forEach((e) => {
         e.set({ strokeDashArray: value });
+      });
+      canvas.renderAll();
+    },
+    changeRounded: (value: number) => {
+      if (!canvas) return null;
+      setRounded(value);
+      // setStrokeWidth(value);
+      selectedObjects.forEach((e) => {
+        // @ts-ignore
+        e.set({ rx: value, ry: value });
       });
       canvas.renderAll();
     },
@@ -112,12 +139,11 @@ const BuildEditor = ({
       });
       addCanvesObject(squire);
     },
-
     delete: () => {
       if (!canvas) return;
       const activeObject = canvas.getActiveObjects();
       if (activeObject) {
-        activeObject.map((ob) => {
+        activeObject.forEach((ob) => {
           canvas.remove(ob);
         });
       }
@@ -128,6 +154,7 @@ const BuildEditor = ({
     strokeColor,
     strokeWidth,
     setFillColor,
+    rounded,
   };
 };
 export default function useEditor() {
@@ -138,6 +165,7 @@ export default function useEditor() {
   const [strokeColor, setStrokeColor] = useState<string>("rgba(0,0,0,1)");
   const [strokeWidth, setStrokeWidth] = useState<number>(0);
   const [strokeDashArray, setStrokeDashArray] = useState<number[]>([]);
+  const [rounded, setRounded] = useState<number>(0);
 
   useCanvesEvent({
     canves: canves,
@@ -155,6 +183,8 @@ export default function useEditor() {
         (selectedObject[0].get("stroke") || strokeColor) as string
       );
       setStrokeWidth(+(selectedObject[0].get("strokeWidth") || strokeWidth));
+      // @ts-ignore
+      setRounded(+(selectedObject[0].get("ry") || rounded));
     }
   }, [selectedObject]);
 
@@ -166,14 +196,24 @@ export default function useEditor() {
         fillColor,
         strokeColor,
         strokeWidth,
+        rounded,
         setFillColor,
         setStrokeColor,
         setStrokeWidth,
-        setStrokeDashArray
+        setStrokeDashArray,
+        setRounded,
       });
     }
     return {};
-  }, [canves, selectedObject, fillColor, strokeColor, strokeWidth,strokeDashArray]) as Editor;
+  }, [
+    canves,
+    selectedObject,
+    fillColor,
+    strokeColor,
+    strokeWidth,
+    strokeDashArray,
+    rounded,
+  ]) as Editor;
 
   const init = useCallback(
     ({
