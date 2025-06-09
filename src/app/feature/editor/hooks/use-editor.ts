@@ -1,6 +1,6 @@
 "use client";
 import { fabric } from "fabric";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import useAutoResize from "./use-auto-resize";
 import { BuildEditorProps, Editor } from "../Types";
 import useCanvesEvent from "./use-canves-event";
@@ -9,7 +9,12 @@ const BuildEditor = ({
   canvas,
   selectedObjects,
   fillColor,
+  strokeColor,
+  strokeWidth,
   setFillColor,
+  setStrokeColor,
+  setStrokeWidth,
+  setStrokeDashArray
 }: BuildEditorProps) => {
   const center = (obj: fabric.Object) => {
     if (!canvas) return;
@@ -32,6 +37,31 @@ const BuildEditor = ({
       setFillColor(value);
       selectedObjects.forEach((e) => {
         e.set({ fill: value });
+      });
+      canvas.renderAll();
+    },
+    changeStrokeColor: (value: string) => {
+      if (!canvas) return null;
+      setStrokeColor(value);
+      selectedObjects.forEach((e) => {
+        e.set({ stroke: value });
+      });
+      canvas.renderAll();
+    },
+    changeStrokeWidth: (value: number) => {
+      if (!canvas) return null;
+      setStrokeWidth(value);
+      selectedObjects.forEach((e) => {
+        e.set({ strokeWidth: value });
+      });
+      canvas.renderAll();
+    },
+    changeStrokeDashArray: (value: number[]) => {
+      if (!canvas) return null;
+      setStrokeDashArray(value);
+      // setStrokeWidth(value);
+      selectedObjects.forEach((e) => {
+        e.set({ strokeDashArray: value });
       });
       canvas.renderAll();
     },
@@ -66,7 +96,6 @@ const BuildEditor = ({
       });
       addCanvesObject(squire);
     },
-
     addRectangle: () => {
       const squire = new fabric.Rect({
         width: 100,
@@ -96,6 +125,8 @@ const BuildEditor = ({
     },
 
     fillColor,
+    strokeColor,
+    strokeWidth,
     setFillColor,
   };
 };
@@ -104,11 +135,28 @@ export default function useEditor() {
   const [container, setContainer] = useState<HTMLDivElement | null>(null);
   const [selectedObject, setSelectedObject] = useState<fabric.Object[]>([]);
   const [fillColor, setFillColor] = useState<string>("rgba(0,0,0,1)");
+  const [strokeColor, setStrokeColor] = useState<string>("rgba(0,0,0,1)");
+  const [strokeWidth, setStrokeWidth] = useState<number>(0);
+  const [strokeDashArray, setStrokeDashArray] = useState<number[]>([]);
 
   useCanvesEvent({
     canves: canves,
     setSelectedObject: setSelectedObject,
   });
+  useAutoResize({
+    canves,
+    container,
+  });
+
+  useEffect(() => {
+    if (selectedObject && selectedObject.length > 0) {
+      setFillColor((selectedObject[0].get("fill") || fillColor) as string);
+      setStrokeColor(
+        (selectedObject[0].get("stroke") || strokeColor) as string
+      );
+      setStrokeWidth(+(selectedObject[0].get("strokeWidth") || strokeWidth));
+    }
+  }, [selectedObject]);
 
   const editor = useMemo(() => {
     if (canves) {
@@ -116,16 +164,16 @@ export default function useEditor() {
         canvas: canves,
         selectedObjects: selectedObject,
         fillColor,
+        strokeColor,
+        strokeWidth,
         setFillColor,
+        setStrokeColor,
+        setStrokeWidth,
+        setStrokeDashArray
       });
     }
     return {};
-  }, [canves, selectedObject, fillColor]) as Editor;
-
-  useAutoResize({
-    canves,
-    container,
-  });
+  }, [canves, selectedObject, fillColor, strokeColor, strokeWidth,strokeDashArray]) as Editor;
 
   const init = useCallback(
     ({
@@ -153,7 +201,8 @@ export default function useEditor() {
         name: "clip",
         selectable: false,
         hasControls: false,
-        moveCursor: "",
+        moveCursor: "pointer",
+        hoverCursor: "default",
         shadow: new fabric.Shadow({
           color: "rgba(0,0,0,0.8)",
           blur: 5,
