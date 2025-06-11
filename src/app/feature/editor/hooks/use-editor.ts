@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import useAutoResize from "./use-auto-resize";
 import { BuildEditorProps, Editor } from "../Types";
 import useCanvesEvent from "./use-canves-event";
+import { ITextboxOptions } from "fabric/fabric-impl";
 
 const BuildEditor = ({
   canvas,
@@ -48,6 +49,10 @@ const BuildEditor = ({
         canvas.sendToBack(obj);
         getWorkspace()?.sendToBack();
       });
+    },
+    addText: (value: string, options: ITextboxOptions) => {
+      const obj = new fabric.Textbox(value, options);
+      addCanvesObject(obj);
     },
     changeFillColor: (value: string) => {
       if (!canvas) return null;
@@ -148,6 +153,7 @@ const BuildEditor = ({
         });
       }
       canvas.discardActiveObject();
+      canvas.renderAll();
     },
 
     fillColor,
@@ -255,6 +261,8 @@ export default function useEditor() {
       initialCanvas.add(initailWordspace);
       initialCanvas.centerObject(initailWordspace);
       initialCanvas.clipPath = initailWordspace;
+
+      
       setContainer(initialContainer);
       setCanves(initialCanvas);
     },

@@ -11,7 +11,7 @@ interface ToolBarProps {
 
 export default function ToolBar({ onChangeActiveTool, editor }: ToolBarProps) {
   return (
-    <div className="w-full bg-white absolute top-0 z-[50] py-2 px-3 gap-3 flex items-center gap-4">
+    <div className="w-full bg-white absolute top-0 z-[50] py-2 px-3 flex items-center gap-4">
       <div className="flex items-center gap-2">
         {/* color button select */}
         <Button

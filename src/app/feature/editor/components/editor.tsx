@@ -10,6 +10,7 @@ import { ActiveTool } from "../Types";
 import ShapeSidebar from "./shape-sidebar";
 import ColorSidebar from "./color-sidebar";
 import StrokeColorSidebar from "./stroke-color-sidebar";
+import TextSidebar from "./text-sidebar";
 
 export default function Editor() {
   const { init, editor } = useEditor();
@@ -103,6 +104,11 @@ export default function Editor() {
           onChangeActiveTool={onChangeActiveTool}
         />
         <StrokeColorSidebar
+          editor={editor}
+          activeTool={activeTool}
+          onChangeActiveTool={onChangeActiveTool}
+        />
+        <TextSidebar
           editor={editor}
           activeTool={activeTool}
           onChangeActiveTool={onChangeActiveTool}
